@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link href="https://cdn.datatables.net/v/bs5/jq-3.7.0/dt-2.0.3/b-3.0.1/b-html5-3.0.1/fh-4.0.1/sc-2.4.1/sb-1.7.0/sp-2.3.0/datatables.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <style>
+      @import "./style.css";
+    </style>
+    <title>JSDev</title>
+  </head>
+  <body>
+    <div id="chart-container">
+      <!-- Search, vote count and active filter -->
+      <div class="vc-toolbar">
+        <label class="vc-sr-only" for="vc-search">Search by name</label>
+        <input id="vc-search" class="vc-search" type="search" placeholder="Search by name" autocomplete="off" />
+        <span id="vc-count" class="vc-badge" aria-live="polite" title="Rows displayed"></span>
+      </div>
+      <div id="vc-filter" class="vc-filter" hidden>
+        <span>Filter: <span id="vc-filter-text"></span></span>
+        <button id="vc-reset" type="button" class="vc-reset"><i class="fa fa-refresh" aria-hidden="true"></i> Reset</button>
+      </div>
+
+      <!-- Stacked vote-type and party-split bars -->
+      <div id="vc-chart" class="vc-chart"></div>
+    </div>
+
+    <table id="table" class="" style="width:100%"></table>
+
+    <script src="https://cdn.datatables.net/v/bs5/jq-3.7.0/dt-2.0.3/b-3.0.1/b-html5-3.0.1/fh-4.0.1/sc-2.4.1/sb-1.7.0/sp-2.3.0/datatables.min.js"></script>
+    <script type="module">
+      import "./index.js";
+    </script>
+  </body>
+</html>

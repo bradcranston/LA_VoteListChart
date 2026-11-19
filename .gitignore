@@ -4,3 +4,9 @@ dist
 import.log
 .parcel-cache
 .DS_Store'
+dist-bar
+*.fmp12
+.DS_Store
+Recover.log
+.env
+.env.*

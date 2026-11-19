@@ -1,23 +1,27 @@
 //import data from "./legislator";
+import Highcharts from 'highcharts';
 
-window.loadData = (json) => {
+window.loadData = (json,f) => {
   const data = JSON.parse(json);
+
+  flip = JSON.parse(f);
 
   //add index element
   const formattedData = data.data.map((e) => Object(e.fieldData));
-  formattedData.forEach(function (row, index) {
+  
+  // Filter out objects where NameLast equals "Vacant"
+  const filteredData = formattedData.filter(row => row.NameLast !== "Vacant");
+  
+  filteredData.forEach(function (row, index) {
     row.index = index;
   });
 
-  const finalData = formattedData;
+  const finalData = filteredData;
 
   let filteredObj = {};
 
   filteredObj.party = false;
   filteredObj.vote = false;
-
-  //break out the flip value
-  let flip = data.flip;
 
   const table = $("#table").DataTable({
     data: finalData,
@@ -28,6 +32,7 @@ window.loadData = (json) => {
     scrollY: "30000px",
     fixedHeader: false,
     ordering: true,
+    order: [[2, 'asc'],[1, 'asc']],
     info: false,
 
     columns: [
@@ -38,7 +43,7 @@ window.loadData = (json) => {
       },
       {
         data: "NameFirst",
-        name: "NameLast",
+        name: "NameFirst",
         visible: false,
       },
       {
@@ -101,19 +106,17 @@ window.loadData = (json) => {
         orderable: false,
       },
       {
-        //Vote
+        // Vote
         render: function (data, type, row) {
           const vote = document.createElement("div");
           vote.textContent = row.Vote;
           vote.classList.add("vote");
-          if (row.Vote === "Aye" && flip !== 1) {
-            voteClass = "voteGreen";
-          } else if (row.Vote === "Aye" && flip === 1) {
-            voteClass = "voteRed";
-          } else if (row.Vote === "Nay" && flip !== 1) {
-            voteClass = "voteRed";
-          } else if (row.Vote === "Nay" && flip === 1) {
-            voteClass = "voteGreen";
+
+          let voteClass = "";
+          if (row.Vote === "Aye") {
+            voteClass = flip ? "voteRed" : "voteGreen";
+          } else if (row.Vote === "Nay") {
+            voteClass = flip ? "voteGreen" : "voteRed";
           } else if (row.Vote === "Absent") {
             voteClass = "voteYellow";
           }
@@ -133,7 +136,7 @@ window.loadData = (json) => {
     table
       .order([
         { name: "NameLast", dir: "asc" },
-        { name: "NmaeFirst", dir: "asc" },
+        { name: "NameFirst", dir: "asc" },
       ])
       .draw();
   };
@@ -248,7 +251,6 @@ window.loadData = (json) => {
         data: chartDataVote(table),
         name: "Vote",
         size: "100%",
-        innerSize: "80%",
         dataLabels: {
           distance: "5%",
           style: {
@@ -267,7 +269,7 @@ window.loadData = (json) => {
         type: "pie",
         data: chartDataParty(table),
         name: "Party",
-        size: "80%",
+        size: "50%",
         dataLabels: {
           distance: "-50%",
           style: {
@@ -308,13 +310,19 @@ window.loadData = (json) => {
         }
       });
 
-    // Define color mapping
-    const colorMap = {
-      Aye: "#90ee90",
-      Nay: "#FF474C",
-      Absent: "#FFFF00",
-      // Add more mappings as needed
-    };
+  // Define base colors
+  const baseColors = {
+    Aye: "#90ee90", // Green
+    Nay: "#FF474C", // Red
+    Absent: "#FFFF00", // Yellow
+  };
+
+  // Flip colors if required
+  const colorMap = {
+    Aye: flip ? baseColors.Nay : baseColors.Aye,
+    Nay: flip ? baseColors.Aye : baseColors.Nay,
+    Absent: baseColors.Absent,
+  };
 
     // Create an array of objects with name, y, and color properties
     return Object.entries(counts).map((entry) => ({
